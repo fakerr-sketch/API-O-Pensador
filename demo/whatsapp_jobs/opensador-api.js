@@ -45,13 +45,13 @@ function startAPI(author){
 */
 function getData(cb){
 
-    var dados;
+    var data;
 	
     $.ajax({
         type: "POST",
         url: "getSite.php?autor="+getAuthor(),
         dataType: "html",
-        data:dados,
+        data,
         contentType: "charset=UTF-8",
         success:cb,
         error: erroAjax
@@ -60,8 +60,8 @@ function getData(cb){
 
 
 
-function erroAjax (XMLHttpRequest, textStatus, errorThrown){
-    $("#body").append("Erro: "+XMLHttpRequest.responseText);
+function erroAjax ({responseText}, textStatus, errorThrown){
+    $("#body").append("Erro: "+responseText);
 };
 
 /**
@@ -73,7 +73,7 @@ function erroAjax (XMLHttpRequest, textStatus, errorThrown){
 function setListPhrasesJSON(param){
     listPhrasesJSON = "";
 		
-	listPhrasesJSON += parser(param);
+    listPhrasesJSON += parser(param);
 	
 	
     //call when ready
@@ -92,7 +92,7 @@ function setAuthor(param){
 }
 
 function getAuthor(){
-	return author;
+    return author;
 }
 
 /**
@@ -125,14 +125,12 @@ function parser(html){
     authors_target = trim(getAuthor().toLowerCase().replace(" ","_"));
 	authors_return = "";
 	authors_split = authors_target.split("_");
-	
-	for(i=0; i<authors_split .length; i++){
-	    
-		if(i>0)
-			authors_return += " ";
-		
-		authors_return +=  authors_split[i].charAt(0).toUpperCase() + authors_split[i].slice(1);
-		
+	authors_split_length = auhtors_split.length
+	//melhora um pouco a peformance, já que o loop armazenará a propiedade length de cada item.
+	//é importante setar o "i" como "let". Isso evita vazamento para o escopo global, ou como é mais conhecido, Hoisting.
+	for(let i = 1; i < authors_split_length; i++){
+	    if ( i > 0 ) authors_return += " ";
+	    authors_return += authors_split[i].charAt(0).toUpperCase() + authors_split[i].slice(1);
 	}
 			
     returnJSON = '{';
@@ -171,8 +169,6 @@ function parser(html){
 	   return returnJSON;
 	
 };
-
-
 /**
  * Delete empty spaces
  * @function
@@ -181,7 +177,5 @@ function parser(html){
  * @returns {XML|string|void|*}
 */
 function trim(str) {
-  	return  str.toString().replace(/^\s+|\s+$/g,"");
-	
+   return  str.toString().replace(/^\s+|\s+$/g,"");	
 }
- 
